@@ -1,0 +1,5 @@
+button(v-on:click="submit", v-bind:disabled="isPending")
+    transition(mode="out-in", name="fade")
+        span(v-if="!isPending") {{ label }}
+        span(v-if="isPending")
+            slot

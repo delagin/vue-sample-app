@@ -1,0 +1,12 @@
+.form-group
+    label.form-control-label.font-13(v-once, v-if="hasSlot", v-bind:for="name")
+        slot
+    input.form-control.form-control-sm.input-sm(
+        v-bind:type="mode",
+        v-bind:name="name",
+        v-bind:id="elementId",
+        v-bind:disabled="isPending",
+        v-bind:placeholder="placeholder",
+        v-on:focus="rememberPrevious()",
+        v-model="elementValue")
+    small.form-text.invalid-feedback(v-if="hasMessage") {{ elementMessage }}

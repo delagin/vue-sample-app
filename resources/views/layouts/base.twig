@@ -1,0 +1,28 @@
+{% set projectName = prjectName ?? 'SMART.hrms' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="axmit">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" href="/icon.ico">
+
+    <title>
+        {% if(block('page_title') is defined) %}
+            {{ block('page_title') ~ ' :: ' ~ projectName }}
+        {% else %}
+            {{ projectName }}
+        {% endif %}
+    </title>
+
+    {{ block('head_meta') }}
+</head>
+
+<body>
+    <div {{ block('body_attributes') }}>
+        {{ block('body') }}
+    </div>
+    {{ block('body_scripts') }}
+</body>
+</html>

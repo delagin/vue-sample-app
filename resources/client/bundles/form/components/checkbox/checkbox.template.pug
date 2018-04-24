@@ -1,0 +1,15 @@
+div
+    .custom-control.custom-checkbox
+        input.custom-control-input(
+            type="checkbox",
+            v-bind:name="name",
+            v-bind:id="elementId",
+            v-on:focus="rememberPrevious()",
+            v-model="elementValue",
+            v-bind:true-value="trueValue",
+            v-bind:false-value="falseValue")
+        label.custom-control-label(
+            v-bind:for="elementId",
+            style="margin-top: 0.125rem;")
+            slot
+    small.form-text.invalid-feedback(v-if="hasMessage") {{ elementMessage }}

@@ -1,0 +1,26 @@
+{% extends 'layouts/base' %}
+
+{% block head_meta %}
+    <link rel="stylesheet" href="{{ mix('/css/core.css') }}">
+    <script src="{{ mix('/js/manifest.js') }}" defer></script>
+    <script src="{{ mix('/js/vendor.js') }}" defer></script>
+    <script src="{{ mix('/js/core.js') }}" defer></script>
+    <script src="{{ mix('/js/app.js') }}" defer></script>
+{% endblock %}
+
+{% block body_attributes %}
+    id="app"
+{% endblock %}
+
+{% block body %}
+<notifications group="notification-default" position="top center" classes="notification"></notifications>
+
+<div class="wrapper">
+    <main class="mx-3 mt-3">
+        {{ block('content') }}
+    </main>
+</div>
+{% endblock %}
+
+{% block body_scripts %}
+{% endblock %}

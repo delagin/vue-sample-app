@@ -1,0 +1,22 @@
+{% macro modal(ns, url, title, text, confirmButton, cancelButton, size) %}
+    <modal v-bind:ns="{{ ns }}" class="position-relative above-navigation">
+        <h4 class="text-white mb-0" slot="title" v-text="{{ title }}"></h4>
+        <form v-bind:name="{{ ns }}" method="delete"
+                 v-bind:action="{{ url }}">
+            <div class="d-flex flex-column card-box mb-0">
+                <p class="font-13 m-0 text-left">
+                    {{ text|raw }}
+                </p>
+                <div class="d-flex align-items-center justify-content-between mt-3">
+                    <toggle-control v-bind:ns="{{ ns }}" class="btn btn-sm btn-outline-secondary">
+                        {{ cancelButton ? cancelButton : 'Отмена' }}
+                    </toggle-control>
+                    <form-button class="btn btn-sm btn-danger w-md"
+                                    label="{{ confirmButton ? confirmButton : 'Подтвердить' }}">
+                        <span class="fa fa-refresh fa-spin"></span>
+                    </form-button>
+                </div>
+            </div>
+        </form>
+    </modal>
+{% endmacro %}

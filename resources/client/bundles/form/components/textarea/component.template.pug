@@ -1,0 +1,14 @@
+.form-group
+    label.form-control-label.font-13(v-once, v-if="hasSlot", v-bind:for="name")
+        slot
+    textarea.form-control.form-control-sm.py-1(
+        style="min-height: 32px;"
+        v-bind:name="name",
+        v-bind:id="elementId",
+        v-bind:disabled="isPending",
+        v-bind:placeholder="placeholder",
+        v-bind:rows="rows",
+        v-bind:cols="cols",
+        v-on:focus="rememberPrevious()",
+        v-model="elementValue")
+    small.form-text.invalid-feedback(v-if="hasMessage") {{ elementMessage }}

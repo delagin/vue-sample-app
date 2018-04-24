@@ -1,0 +1,67 @@
+{
+    "extends": "tslint-microsoft-contrib",
+    "rules": {
+        "no-parameter-properties": false,
+        "max-line-length": [
+            true,
+            100
+        ],
+        "typedef": [
+            true,
+            "call-signature",
+            "parameter",
+            "property-declaration",
+            "member-variable-declaration"
+        ],
+        "curly": [
+            true,
+            "ignore-same-line"
+        ],
+        "newline-before-return": false,
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "always",
+                "singleline": "never"
+            }
+        ],
+        "missing-jsdoc": false,
+        "no-relative-imports": false,
+        "import-name": false,
+        "no-import-side-effect": false,
+        "no-reference": false,
+        "no-default-export": false,
+        "export-name": false,
+        "prefer-type-cast": false,
+        "no-invalid-this": false,
+        "prefer-method-signature": false,
+        "function-name": [
+            true,
+            {
+                "method-regex": "^[$|a-z][\\w\\d]+$",
+                "private-method-regex": "^[a-z][\\w\\d]+$",
+                "protected-method-regex": "^[a-z][\\w\\d]+$",
+                "static-method-regex": "^[a-z][\\w\\d]+$",
+                "function-regex": "^[A-Za-z][\\w\\d]+$"
+            }
+        ],
+        "no-any": false,
+        "no-stateless-class": false,
+        "no-function-expression": false,
+        "prefer-array-literal": false,
+        "no-non-null-assertion": false,
+        "variable-name": [
+            true,
+            "allow-pascal-case"
+        ],
+        "no-unused-expression": false,
+        "no-multiline-string": false,
+        "no-single-line-block-comment": false,
+        "no-backbone-get-set-outside-model": false,
+        "no-reserved-keywords": false,
+        "no-empty-interface": false,
+        "interface-name": false,
+        "max-classes-per-file": false,
+        "prefer-for-of": false
+    }
+}

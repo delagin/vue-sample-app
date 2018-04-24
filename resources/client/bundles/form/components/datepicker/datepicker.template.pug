@@ -1,0 +1,20 @@
+.form-group
+    label.form-control-label.font-13(v-once, v-if="hasSlot", v-bind:for="name")
+        slot
+    .input-group.input-group-sm.font-13.position-relative
+        .input-group-prepend
+            span.input-group-text.px-0.pt-0.pb-1.d-flex.justify-content-center.align-items-center.fa.fa-calendar.bg-primary.b-0.text-white(
+                style="width: 2.25rem;")
+        span.close.fa.fa-times.text-secondary.p-1.font-16.position-absolute.mr-1.mt-1(
+            style="right: 0; top: 0; z-index: 1;",
+            v-if="optional",
+            v-on:click="clear()")
+        input.form-control.input-sm.border-left-0(
+            type="text",
+            ref="input",
+            v-bind:name="name",
+            v-bind:id="elementId",
+            v-bind:disabled="isPending",
+            v-bind:placeholder="placeholder",
+            v-on:focus="rememberPrevious()")
+    small.form-text.invalid-feedback(v-if="hasMessage") {{ elementMessage }}

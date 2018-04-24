@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "ES6"
+    },
+    "include": [
+        "assets/app/**/*.js"
+    ],
+    "typeAcquisition": {
+        "include": [
+            "jasmine-core",
+            "vue"
+        ]
+    }
+}

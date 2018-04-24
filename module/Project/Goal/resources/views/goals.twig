@@ -1,0 +1,233 @@
+{% set listCreateLink = route('groups.create', {
+    'username': user.username
+}) %}
+{% set listUpdateLink = route('groups.update', {
+    'group': '%group%'
+}) %}
+{% set listCloseLink = route('groups.complete', {
+    'group': '%group%'
+}) %}
+{% set goalUpdateLink = route('groups.goals.update', {
+    'group': '%group%',
+    'id': '%id%'
+}) %}
+{% set goalDeleteLink = route('groups.goals.destroy', {
+    'group': '%group%',
+    'id': '%id%'
+}) %}
+{% set goalCreateLink = route('groups.goals.create', {
+    'group': '%group%'
+}) %}
+<goal-period-list inline-template
+    list-url="{{ listCreateLink }}">
+    <toggle-container v-bind:ns="name.partlyEditableList()" v-bind:visible="false">
+        <!-- New list -->
+        <div slot="on">
+            <toggle-container v-bind:ns="name.transferList()">
+                <div slot="on">
+                    <span class="text-muted font-13">
+                        Some goals are open. Do you want to add them to the next goals list?
+                    </span>
+                    <collection-main tag="ul" v-bind:ns="name.goalsUncomplete()" class="list-unstyled alert alert-warning mt-3">
+                        <li slot-scope="item">
+                            — <span v-text="item.to.label"></span>
+                        </li>
+                    </collection-main>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-sm btn-outline-secondary w-md" v-on:click="cancelGoal()">
+                            Close
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary w-md" v-on:click="saveGoal()">
+                            Move
+                        </button>
+                    </div>
+                </div>
+                <form-main slot="off" v-bind:name="name.listForm()">
+                    <toggle-container v-bind:ns="name.startGoals()">
+                        <div slot="on">
+                            <div class="alert alert-secondary text-center">
+                                <span class="text-muted">
+                                    <span class="fa fa-exclamation fa-lg mr-2 settings-hint-icon"></span>
+                                    There are no goals
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <toggle-control v-bind:ns="name.startGoals()" type="button"
+                                    class="btn btn-sm btn-success w-lg px-4">
+                                    Make goals list
+                                </toggle-control>
+                            </div>
+                        </div>
+                        <div slot="off">
+                            <div class="d-flex">
+                                <datepicker-main v-bind:path="name.dueDate()" class="mr-2 w-100">
+                                    Due date
+                                </datepicker-main>
+                                <datepicker-main v-bind:path="name.reminder()" v-bind:time="true" class="w-100"
+                                    v-bind:optional="true">
+                                    Remind <span class="text-muted">(optional)</span>
+                                </datepicker-main>
+                            </div>
+                            <label class="font-13">Goals list <span class="text-muted">(at least one)</span></label>
+                            <collection-main slot="on" tag="ul" v-bind:ns="name.goalsUnsaved()" class="list-unstyled mb-0">
+                                <li slot="first">
+                                    <input-main mode="hidden" v-bind:path="name.goalsArray()" v-bind:valuable="false"
+                                        class="mb-0"></input-main>
+                                </li>
+                                <li slot-scope="item" class="d-flex align-items-baseline">
+                                    <span class="text-muted mr-2">#</span>
+                                    <checkbox-main v-bind:path="name.goalLabelNew(item.to)" hidden
+                                        v-bind:value="item.to.isNew"></checkbox-main>
+                                    <textarea-main v-bind:path="name.goalLabel(item.to)" placeholder="Описание цели"
+                                        rows="1" class="w-100 mr-2" v-bind:value="item.to.label"></textarea-main>
+                                    <button type="button" class="close fa fa-times font-16 p-1"
+                                        v-bind:class="item.isSingle ? 'text-secondary' : 'text-danger'"
+                                        v-on:click="removeGoal(item.to)" v-bind:disabled="item.isSingle"></button>
+                                </li>
+                                <li slot="last">
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-sm btn-success w-md" v-on:click="addGoal()">
+                                            Add goal
+                                        </button>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between">
+                                        <toggle-control v-bind:ns="name.startGoals()" type="button"
+                                            class="btn btn-sm btn-outline-secondary w-md">
+                                            Cancel
+                                        </toggle-control>
+                                        <form-button class="btn btn-sm btn-primary w-md" label="Сохранить"
+                                            method="POST" action="{{ listCreateLink }}">
+                                            <span class="fa fa-refresh font-16 fa-spin"></span>
+                                        </form-button>
+                                    </div>
+                                </li>
+                            </collection-main>
+                        </div>
+                    </toggle-container>
+                </form-main>
+            </toggle-container>
+        </div>
+        <!-- Created list -->            
+        <div slot="off">
+            <div v-if="list">
+                <toggle-container v-bind:ns="name.listUpdateForm()">
+                    <div slot="on" class="d-flex justify-content-between">
+                        <div class="font-13">
+                            <span class="text-muted">Due date:</span>
+                            <span v-text="list.dueDateText"></span>
+                            <br>
+                            <template v-if="list.hasReminder">
+                                <span class="text-muted">Remind:</span>
+                                <span v-text="list.remindDateText"></span>
+                            </template>
+                        </div>
+                        <div>
+                            <toggle-control type="button" v-bind:ns="name.listUpdateForm()"
+                                class="btn btn-sm btn-outline-secondary w-md">
+                                Change
+                            </toggle-control>
+                        </div>
+                    </div>
+                    <form-main slot="off" v-bind:name="name.listUpdateForm()" method="PATCH"
+                        v-bind:action="name.goalFormUrl('{{ listUpdateLink }}', list)">
+                        <div class="d-flex mb-3">
+                            <datepicker-main v-bind:path="name.dueDate()" class="mr-2 mb-0 w-100"
+                                v-bind:value="list.dueDate">
+                                Due date
+                            </datepicker-main>
+                            <datepicker-main v-bind:path="name.reminder()" v-bind:time="true" class="mb-0 w-100"
+                                v-bind:value="list.remindDate" v-bind:optional="true">
+                                Remind <span class="text-muted">(optional)</span>
+                            </datepicker-main>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <toggle-control type="button" v-bind:ns="name.listUpdateForm()"
+                                class="btn btn-sm btn-outline-secondary w-md">
+                                Cancel
+                            </toggle-control>
+                            <form-button class="btn btn-sm btn-primary w-md" label="Сохранить">
+                                <span class="fa fa-refresh font-16 fa-spin"></span>
+                            </form-button>
+                        </div>
+                    </form-main>
+                </toggle-container>
+                <hr>
+                <h4 class="text-dark header-title mt-0 mb-3">
+                    Goals list
+                </h4>
+                <collection-main slot="off" tag="ul" v-bind:ns="name.goals()" class="list-unstyled mb-0">
+                    <li slot-scope="item" class="mb-1">
+                        <form-main v-bind:name="name.goalForm(item.to)" method="PATCH"
+                            v-bind:action="name.goalFormUrl('{{ goalUpdateLink }}', list, item.to)">
+                            <toggle-container v-bind:ns="name.goalEdit(item.to)">
+                                <div slot="on" class="d-flex align-content-center input-sm">
+                                    <div class="d-flex mr-2 mt-1 w-100 ">
+                                        <checkbox-main v-bind:element-id="name.goalForm(item.to)"
+                                            v-bind:path="name.goalCompleted()" class="mr-2 mb-0"
+                                            v-bind:value="item.to.isCompleted"
+                                            v-bind:true-value="true" v-bind:false-value="false"
+                                            v-on:change.native="updateGoal(item.to)">
+                                            <span v-text="item.to.label"></span>
+                                        </checkbox-main>
+                                        <hidden-input v-bind:path="name.goalLabel()" v-bind:value="item.to.label"></hidden-input>
+                                    </div>
+                                    <toggle-control type="button" v-bind:ns="name.goalEdit(item.to)"
+                                        class="close fa fa-edit font-16 text-black p-1 mr-2"></toggle-control>
+                                    <form-main v-bind:name="name.goalDeleteForm(item.to)" method="DELETE" class="d-flex"
+                                        v-bind:action="name.goalFormUrl('{{ goalDeleteLink }}', list, item.to)">
+                                        <form-button class="close fa fa-trash font-16 p-1"
+                                            v-bind:class="item.isSingle ? 'text-secondary' : 'text-danger'"
+                                            v-bind:disabled="item.isSingle"></form-button>
+                                    </form-main>
+                                </div>
+                                <div slot="off" class="d-flex align-content-center">
+                                    <hidden-input v-bind:path="name.goalCompleted()"
+                                        v-bind:value="item.to.isCompleted"></hidden-input>
+                                    <input-main v-bind:path="name.goalLabel()" v-bind:value="item.to.label"
+                                        class="w-100 mr-2 mb-0" placeholder="Описание цели"></input-main>
+                                    <form-button
+                                        class="close fa fa-check font-16 text-primary p-1 mr-2 mt-1 align-self-start"></form-button>
+                                    <toggle-control type="button" v-bind:ns="name.goalEdit(item.to)"
+                                        class="close fa fa-times font-16 text-secondary p-1 mt-1 align-self-start"></toggle-control>
+                                </div>
+                            </toggle-container>
+                        </form-main>
+                    </li>
+                    <li slot="last" class="mt-3">
+                        <toggle-container v-bind:ns="name.createGoal()">
+                            <div slot="on" class="d-flex justify-content-end">
+                                <toggle-control type="button" v-bind:ns="name.createGoal()"
+                                    class="btn btn-sm btn-success w-lg">
+                                    Add goal
+                                </toggle-control>
+                            </div>
+                            <form-main slot="off" v-bind:name="name.createGoal()" class="d-flex align-items-center"
+                                v-bind:action="name.goalFormUrl('{{ goalCreateLink }}', list)" method="POST">
+                                <input-main v-bind:path="name.goalLabel()" placeholder="Описание цели"
+                                    class="mr-2 mb-0 w-100"></input-main>
+                                <form-button
+                                    class="close fa fa-check font-16 text-primary p-1 mr-2"></form-button>
+                                <toggle-control type="button" v-bind:ns="name.createGoal()"
+                                    class="close fa fa-times font-16 text-secondary p-1"></toggle-control>
+                            </form-main>
+                        </toggle-container>
+                        <hr>
+                        <div class="d-flex justify-content-end">
+                            <form-main v-bind:name="name.closeList()" method="POST"
+                                v-bind:action="name.goalFormUrl('{{ listCloseLink }}', list)">
+                                <form-button label="Завершить" class="btn btn-sm btn-primary w-lg px-4">
+                                    <span class="fa fa-refresh font-16 fa-spin"></span>
+                                </form-button>
+                            </form-main>
+                        </div>
+                    </li>
+                </collection-main>
+            </div>
+            <div v-else class="d-flex justify-content-center">
+                <span class="fa fa-refresh fa-spin fa-3x text-secondary"></span>
+            </div>
+        </div>
+    </toggle-container>
+</goal-period-list>
