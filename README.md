@@ -1,1 +1,3 @@
-vue-sample-app
+# vue-sample-app
+
+Vue sample application
